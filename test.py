@@ -11,6 +11,13 @@ import matplotlib.pyplot as plt
 import brevitas.nn as qnn
 from brevitas.core.quant import QuantType
 
+from BrevitasModNets import lenet_ReLU as n1
+from BrevitasModNets import alexnet_ReLU as n2
+from BrevitasModNets import torchvision_alexnet_ReLU as n3
+from BrevitasModNets import torchvision_alexnet_tanh_noBN as n4
+from BrevitasModNets import torchvision_alexnet_tanh_BN_PreA as n5
+from BrevitasModNets import torchvision_alexnet_tanh_BN_PostA as n6
+
 batch_size=32
 img_dimensions = 224
 
@@ -74,11 +81,10 @@ def check_image(path):
     except:
         return False
 
-print("Which dataset should be loaded?")
-print("1 = Cats vs Dogs")
-print("2 = CIFAR10")
+#######################################################################################################################
 
-choice = input()
+
+print("Testing Net on both datasets...")
 
 choices = ["1", "2"]
 
@@ -109,52 +115,6 @@ for x in choices:
         weightBitWidth = 1
         activationQuantType = QuantType.BINARY
         activationBitWidth = 1
-
-        class Net(nn.Module):
-            def __init__(self, num_classes = num_classes, weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth, 
-                        quant_type = activationQuantType, bit_width = activationBitWidth):
-                super(Net, self).__init__()
-                self.features = nn.Sequential(
-                    qnn.QuantConv2d(3, 96, kernel_size=11, stride=4, padding=0,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantTanh(bit_width=activationBitWidth, quant_type=activationQuantType),
-                    nn.BatchNorm2d(96),
-                    nn.MaxPool2d(kernel_size=3, stride=2),
-                    qnn.QuantConv2d(96, 256, kernel_size=5, padding=2,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantTanh(bit_width=activationBitWidth, quant_type=activationQuantType),
-                    nn.BatchNorm2d(256),
-                    nn.MaxPool2d(kernel_size=3, stride=2),
-                    qnn.QuantConv2d(256, 384, kernel_size=3, padding=1,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantTanh(bit_width=activationBitWidth, quant_type=activationQuantType),
-                    qnn.QuantConv2d(384, 384, kernel_size=3, padding=1,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantTanh(bit_width=activationBitWidth, quant_type=activationQuantType),
-                    qnn.QuantConv2d(384, 256, kernel_size=3, padding=1,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantTanh(bit_width=activationBitWidth, quant_type=activationQuantType),
-                    nn.MaxPool2d(kernel_size=3, stride=2),
-                    )
-                self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
-                self.classifier = nn.Sequential(
-                    qnn.QuantLinear(256 * 6 * 6, 4096, bias=True, 
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantTanh(bit_width=activationBitWidth, quant_type=activationQuantType),
-                    nn.Dropout(),
-                    qnn.QuantLinear(4096, 4096, bias=False,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantTanh(bit_width=activationBitWidth, quant_type=activationQuantType),
-                    nn.Dropout(),
-                    qnn.QuantLinear(4096, num_classes, bias=True,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    )
-            def forward(self, x):
-                x = self.features(x)
-                x = self.avgpool(x)
-                x = torch.flatten(x, 1)
-                x = self.classifier(x)
-                return x
 
         net = Net()
             
