@@ -12,10 +12,10 @@ class Net(nn.Module):
                 super(Net, self).__init__()
                 self.features = nn.Sequential(
                     qnn.QuantConv2d(1, 20, kernel_size=5, stride=1, padding=0,
-                        weight_quant_type, weight_bit_width),                   
+                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),                   
                     nn.MaxPool2d(kernel_size=2, stride=2),
                     qnn.QuantConv2d(20, 50, kernel_size=5, padding=0,
-                        weight_quant_type, weight_bit_width),
+                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
                     nn.MaxPool2d(kernel_size=2, stride=2),
                     )
                 self.classifier = nn.Sequential(
