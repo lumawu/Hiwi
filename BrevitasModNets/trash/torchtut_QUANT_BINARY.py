@@ -22,9 +22,9 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship'
 
 # Define Network
 
-class Net(Module):
+class TorchtutNet(Module):
 	def __init__(self):
-		super(Net, self).__init__()
+		super(TorchtutNet, self).__init__()
 		self.conv1 = qnn.QuantConv2d(3, 6, 5, weight_quant_type=QuantType.BINARY, weight_bit_width=1)
 		self.pool = nn.MaxPool2d(2, 2)
 		self.conv2 = qnn.QuantConv2d(6, 16, 5, weight_quant_type=QuantType.BINARY, weight_bit_width=1)

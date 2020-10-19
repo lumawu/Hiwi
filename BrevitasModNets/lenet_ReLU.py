@@ -7,9 +7,9 @@ import torch.nn as nn
 import brevitas.nn as qnn
 from brevitas.core.quant import QuantType
 
-class Net(nn.Module):
+class LeNet(nn.Module):
             def __init__(self, num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width):
-                super(Net, self).__init__()
+                super(LeNet, self).__init__()
                 self.features = nn.Sequential(
                     qnn.QuantConv2d(1, 20, kernel_size=5, stride=1, padding=0,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),                   
@@ -20,10 +20,10 @@ class Net(nn.Module):
                     )
                 self.classifier = nn.Sequential(
                     qnn.QuantLinear(64 * 50 * 4 * 4, 64 * 500, bias=True, 
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
-                    qnn.QuantReLU(quant_type, bit_width)                    
+                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
+                    qnn.QuantReLU(quant_type, bit_width),                    
                     qnn.QuantLinear(64 * 500, 64 * 10, bias=False,
-                        weight_quant_type=weightQuantType, weight_bit_width=weightBitWidth),
+                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
                     )
             def forward(self, x):
                 x = self.features(x)

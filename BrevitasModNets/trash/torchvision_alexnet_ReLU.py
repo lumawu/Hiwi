@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from .utils import load_state_dict_from_url
 import brevitas.nn as qnn
+from brevitas.core.quant import QuantType
 
 
 class AlexNet(nn.Module):
@@ -11,34 +11,34 @@ class AlexNet(nn.Module):
         self.features = nn.Sequential(
             qnn.QuantConv2d(3, 64, kernel_size=11, stride=4, padding=2,
                weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-            qnn.QuantReLU(inplace=True, bit_width, quant_type),
+            qnn.QuantReLU(bit_width=bit_width, max_val=2**bit_width, quant_type=quant_type),
             nn.MaxPool2d(kernel_size=3, stride=2),
             qnn.QuantConv2d(64, 192, kernel_size=5, padding=2,
                weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-            qnn.QuantReLU(inplace=True, bit_width, quant_type),
+            qnn.QuantReLU(bit_width=bit_width, max_val=2**bit_width, quant_type=quant_type),
             nn.MaxPool2d(kernel_size=3, stride=2),
             qnn.QuantConv2d(192, 384, kernel_size=3, padding=1,
                weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-            qnn.QuantReLU(inplace=True, bit_width, quant_type),
+            qnn.QuantReLU(bit_width=bit_width, max_val=2**bit_width, quant_type=quant_type),
             qnn.QuantConv2d(384, 256, kernel_size=3, padding=1,
                weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-            qnn.QuantReLU(inplace=True, bit_width, quant_type),
+            qnn.QuantReLU(bit_width=bit_width, max_val=2**bit_width, quant_type=quant_type),
             qnn.QuantConv2d(256, 256, kernel_size=3, padding=1,
                weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-            qnn.QuantReLU(inplace=True, bit_width, quant_type),
+            qnn.QuantReLU(bit_width=bit_width, max_val=2**bit_width, quant_type=quant_type),
             nn.MaxPool2d(kernel_size=3, stride=2),
         )
         self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
         self.classifier = nn.Sequential(
             nn.Dropout(),
-            qnn.QuantLinear(256 * 6 * 6, 4096, 
+            qnn.QuantLinear(256 * 6 * 6, 4096, bias=True,
                   weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-            qnn.QuantReLU(inplace=True, bit_width, quant_type),
+            qnn.QuantReLU(bit_width=bit_width, max_val=2**bit_width, quant_type=quant_type),
             nn.Dropout(),
-            qnn.QuantLinear(4096, 4096,
+            qnn.QuantLinear(4096, 4096, bias=True,
                   weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-            qnn.QuantReLU(inplace=True, bit_width, quant_type),
-            qnn.QuantLinear(4096, num_classes,
+            qnn.QuantReLU(bit_width=bit_width, max_val=2**bit_width, quant_type=quant_type),
+            qnn.QuantLinear(4096, num_classes, bias=True,
                   weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
         )
 

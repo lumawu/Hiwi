@@ -11,39 +11,51 @@ import torch.nn as nn
 import brevitas.nn as qnn
 from brevitas.core.quant import QuantType
 
+class activation(nn.Module):
+        def __init__(self, bit_width, quant_type):
+            super(activation, self).__init__()
 
-class Net(nn.Module):
+        def __call__(self, bit_width):
+            print("activation called")
+            quant_type = QuantType.BINARY
+            if quant_type == QuantType.BINARY:
+                return qnn.QuantTanh(bit_width, quant_type)
+            else: 
+                return qnn.QuantReLU(bit_width, quant_type)
+
+class AlexNet(nn.Module):
             def __init__(self, num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width):
-                super(Net, self).__init__()
+                super(AlexNet, self).__init__()
                 self.features = nn.Sequential(
                     qnn.QuantConv2d(3, 96, kernel_size=11, stride=4, padding=0,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    qnn.QuantReLU(bit_width, quant_type),                   
-                    qnn.BatchNorm2dToQuantScaleBias(96, weight_quant_type, weight_bit_width),
+                    activation(bit_width = bit_width, quant_type = quant_type),                   
+                    nn.BatchNorm2d(96),
                     nn.MaxPool2d(kernel_size=3, stride=2),
                     qnn.QuantConv2d(96, 256, kernel_size=5, padding=2,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    qnn.BatchNorm2dToQuantScaleBias(256, weight_quant_type, weight_bit_width),
+                    activation(bit_width = bit_width, quant_type = quant_type),  
+                    nn.BatchNorm2d(256),
                     nn.MaxPool2d(kernel_size=3, stride=2),
                     qnn.QuantConv2d(256, 384, kernel_size=3, padding=1,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    qnn.QuantReLU(bit_width, quant_type),
+                    activation(bit_width = bit_width, quant_type = quant_type),  
                     qnn.QuantConv2d(384, 384, kernel_size=3, padding=1,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    qnn.QuantReLU(bit_width, quant_type),
+                    activation(bit_width = bit_width, quant_type = quant_type),  
                     qnn.QuantConv2d(384, 256, kernel_size=3, padding=1,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    qnn.QuantReLU(bit_width, quant_type),
+                    activation(bit_width = bit_width, quant_type = quant_type),  
                     nn.MaxPool2d(kernel_size=3, stride=2),
                     )
                 self.classifier = nn.Sequential(
                     qnn.QuantLinear(256 * 6 * 6, 4096, bias=True, 
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    qnn.QuantReLU(bit_width, quant_type),
+                    activation(bit_width = bit_width, quant_type = quant_type),  
                     nn.Dropout(),
                     qnn.QuantLinear(4096, 4096, bias=False,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    qnn.QuantReLU(bit_width, quant_type),
+                    activation(bit_width = bit_width, quant_type = quant_type),  
                     nn.Dropout(),
                     qnn.QuantLinear(4096, num_classes, bias=True,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
@@ -52,3 +64,6 @@ class Net(nn.Module):
                 x = self.features(x)
                 x = self.classifier(x)
                 return x
+
+
+

@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 import brevitas.nn as qnn
 from brevitas.core.quant import QuantType
 
-from BrevitasModNets import lenet_ReLU as n1
-from BrevitasModNets import alexnet_ReLU as n2
-from BrevitasModNets import torchvision_alexnet_ReLU as n3
-from BrevitasModNets import torchvision_alexnet_tanh_noBN as n4
-from BrevitasModNets import torchvision_alexnet_tanh_BN_PreA as n5
-from BrevitasModNets import torchvision_alexnet_tanh_BN_PostA as n6
+# from BrevitasModNets.lenet_ReLU import LeNet as n1
+from BrevitasModNets.alexnet_ReLU import AlexNet as n2
+# from BrevitasModNets.torchvision_alexnet_ReLU import AlexNet as n3
+from BrevitasModNets.torchvision_alexnet_tanh_noBN import AlexNet as n4
+from BrevitasModNets.torchvision_alexnet_tanh_BN_PreA import AlexNet as n5
+from BrevitasModNets.torchvision_alexnet_tanh_BN_PostA import AlexNet as n6
 
 batch_size=32
 img_dimensions = 224
@@ -83,13 +83,14 @@ def check_image(path):
 
 #######################################################################################################################
 
+print("Testing...")
 
-print("Testing Net on both datasets...")
-
-choices = ["1", "2"]
+quantizations = [QuantType.BINARY, QuantType.INT]
+bitWidths = [2, 3, 4, 5, 6, 7, 8]
+choices = ["CatsVSDogs", "CIFAR10"]
 
 for x in choices:
-    if x == "1":
+    if x == "CatsVSDogs":
         train_data_path = "/home/lucia/projdata/catsVdogs/train/"
         test_data_path = "/home/lucia/projdata/catsVdogs/test/"
         train_data = torchvision.datasets.ImageFolder(root=train_data_path,transform=img_transforms, is_valid_file=check_image)
@@ -98,7 +99,7 @@ for x in choices:
         test_data_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, num_workers=num_workers)
         num_classes = 2
     
-    elif x == "2":
+    elif x == "CIFAR10":
         trainset = torchvision.datasets.CIFAR10(root='/home/lucia/projdata/CIFAR10', train=True, download=True, transform=img_transforms)
         train_data_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         testset = torchvision.datasets.CIFAR10(root='/home/lucia/projdata/CIFAR10', train=False, download=True, transform=img_transforms)
@@ -106,28 +107,77 @@ for x in choices:
         classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
         num_classes = 10
 
-    else:
-        print("invalid choice")
-    
-    for y in range(2,3):
-
-        weightQuantType = QuantType.BINARY
-        weightBitWidth = 1
-        activationQuantType = QuantType.BINARY
-        activationBitWidth = 1
-
-        net = Net()
+    for quantization in quantizations:
+        weight_quant_type = quantization
+        quant_type = quantization
             
-        if torch.cuda.is_available():
-            device = torch.device("cuda") 
+        if quantization == QuantType.BINARY:
+            weight_bit_width = 1
+            bit_width = 1
+
+            Nets = [n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n5(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n6(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
+
+            netStr = ["alexnet_ReLU", "torchvision_alexnet_tanh_noBN", 
+                        "torchvision_alexnet_BN_PreA", "torchvision_alexnet_BN_PostA"]
+            index = 0
+
+            for net in Nets:
+                if torch.cuda.is_available():
+                    device = torch.device("cuda") 
+                else:
+                    device = torch.device("cpu")
+                
+                print("######################################################################################")
+                print(" ")
+                print("Testing net " + netStr[index] + " with following parameters on Dataset " + x + " : ")
+                print("quantization: " + str(quantization) + " bit width: " + str(bit_width))
+                print(" ")
+
+                net.to(device)
+                criterion = nn.CrossEntropyLoss()
+                optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+                    
+                train(net, optimizer, criterion, train_data_loader, epochs=2, device=device)
+                test_model(net)
+
+                index+=1
+
         else:
-            device = torch.device("cpu")
+            for bitWidth in bitWidths:
+                weight_bit_width = bitWidth
+                bit_width = bitWidth
             
-        net.to(device)
-        criterion = nn.CrossEntropyLoss()
-        optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+            Nets = [n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width),  
+                    n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n5(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n6(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
+
+            netStr = ["alexnet_ReLU", "torchvision_alexnet_tanh_noBN", 
+                        "torchvision_alexnet_BN_PreA", "torchvision_alexnet_BN_PostA"]
+            index = 0
             
-        train(net, optimizer, criterion, train_data_loader, epochs=2, device=device)
-        test_model(net)
+            for net in Nets:
+                if torch.cuda.is_available():
+                    device = torch.device("cuda") 
+                else:
+                    device = torch.device("cpu")
+                
+                print("######################################################################################")
+                print(" ")
+                print("Testing net " + netStr[index] + " with following parameters on Dataset " + x + " : ")
+                print("quantization: " + str(quantization) + " bit width: " + str(bit_width))
+                print(" ")
+
+                net.to(device)
+                criterion = nn.CrossEntropyLoss()
+                optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+                    
+                train(net, optimizer, criterion, train_data_loader, epochs=2, device=device)
+                test_model(net)
+
+                index+=1
 
 
