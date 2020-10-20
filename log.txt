@@ -1,0 +1,131 @@
+Testing...
+######################################################################################
+ 
+Testing net self_alexnet with following parameters on Dataset CatsVSDogs : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 3.2616239964485167
+Training Loss for epoch 1: 2.1378323350906374
+Test performance:    correct: 2557  total: 5000   accuracy: 0.511400
+######################################################################################
+ 
+Testing net torchvision_alexnet_noBN with following parameters on Dataset CatsVSDogs : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 1.7639723272323609
+Training Loss for epoch 1: 1.1432116726875305
+Test performance:    correct: 2671  total: 5000   accuracy: 0.534200
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PreA with following parameters on Dataset CatsVSDogs : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 0.8544307616233826
+Training Loss for epoch 1: 0.7877403640270233
+Test performance:    correct: 2459  total: 5000   accuracy: 0.491800
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PostA with following parameters on Dataset CatsVSDogs : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 1.8343620029449463
+Training Loss for epoch 1: 1.426826282119751
+Test performance:    correct: 2510  total: 5000   accuracy: 0.502000
+######################################################################################
+ 
+Testing net self_alexnet with following parameters on Dataset CatsVSDogs : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 0.646227531337738
+Training Loss for epoch 1: 0.5089969734668731
+Test performance:    correct: 3560  total: 5000   accuracy: 0.712000
+######################################################################################
+ 
+Testing net torchvision_alexnet_tanh_noBN with following parameters on Dataset CatsVSDogs : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 0.692536614894867
+Training Loss for epoch 1: 0.6879085416793823
+Test performance:    correct: 2848  total: 5000   accuracy: 0.569600
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PreA with following parameters on Dataset CatsVSDogs : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 0.6131778807163238
+Training Loss for epoch 1: 0.4800760815858841
+Test performance:    correct: 2449  total: 5000   accuracy: 0.489800
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PostA with following parameters on Dataset CatsVSDogs : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 0.797750528049469
+Training Loss for epoch 1: 0.6587748557090759
+Test performance:    correct: 2505  total: 5000   accuracy: 0.501000
+Files already downloaded and verified
+Files already downloaded and verified
+######################################################################################
+ 
+Testing net self_alexnet with following parameters on Dataset CIFAR10 : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 25.67703262496948
+Training Loss for epoch 1: 40.5687995437622
+Test performance:    correct: 968  total: 10000   accuracy: 0.096800
+######################################################################################
+ 
+Testing net torchvision_alexnet_noBN with following parameters on Dataset CIFAR10 : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 7.97561403717041
+Training Loss for epoch 1: 7.724384079589844
+Test performance:    correct: 1436  total: 10000   accuracy: 0.143600
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PreA with following parameters on Dataset CIFAR10 : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 2.7148170960235594
+Training Loss for epoch 1: 2.1167523639678953
+Test performance:    correct: 3595  total: 10000   accuracy: 0.359500
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PostA with following parameters on Dataset CIFAR10 : 
+quantization: BINARY bit width: 1
+ 
+Training Loss for epoch 0: 9.12165540649414
+Training Loss for epoch 1: 5.89545095993042
+Test performance:    correct: 1037  total: 10000   accuracy: 0.103700
+######################################################################################
+ 
+Testing net self_alexnet with following parameters on Dataset CIFAR10 : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 1.6571702562713624
+Training Loss for epoch 1: 1.1670635293769835
+Test performance:    correct: 6427  total: 10000   accuracy: 0.642700
+######################################################################################
+ 
+Testing net torchvision_alexnet_tanh_noBN with following parameters on Dataset CIFAR10 : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 2.163361390609741
+Training Loss for epoch 1: 1.6568088241577148
+Test performance:    correct: 4648  total: 10000   accuracy: 0.464800
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PreA with following parameters on Dataset CIFAR10 : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 1.3912595714950562
+Training Loss for epoch 1: 0.9944142449760437
+Test performance:    correct: 6900  total: 10000   accuracy: 0.690000
+######################################################################################
+ 
+Testing net torchvision_alexnet_BN_PostA with following parameters on Dataset CIFAR10 : 
+quantization: INT bit width: 8
+ 
+Training Loss for epoch 0: 1.5741915684509278
+Training Loss for epoch 1: 1.1489557107925414
+Test performance:    correct: 6532  total: 10000   accuracy: 0.653200

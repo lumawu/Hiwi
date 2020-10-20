@@ -11,12 +11,10 @@ import matplotlib.pyplot as plt
 import brevitas.nn as qnn
 from brevitas.core.quant import QuantType
 
-# from BrevitasModNets.lenet_ReLU import LeNet as n1
-from BrevitasModNets.alexnet_ReLU import AlexNet as n2
-# from BrevitasModNets.torchvision_alexnet_ReLU import AlexNet as n3
-from BrevitasModNets.torchvision_alexnet_tanh_noBN import AlexNet as n4
-from BrevitasModNets.torchvision_alexnet_tanh_BN_PreA import AlexNet as n5
-from BrevitasModNets.torchvision_alexnet_tanh_BN_PostA import AlexNet as n6
+from BrevitasModNets.self_alexnet import AlexNet as n1
+from BrevitasModNets.torchvision_alexnet_noBN import AlexNet as n2
+from BrevitasModNets.torchvision_alexnet_BN_PreA import AlexNet as n3
+from BrevitasModNets.torchvision_alexnet_BN_PostA import AlexNet as n4
 
 batch_size=32
 img_dimensions = 224
@@ -115,12 +113,12 @@ for x in choices:
             weight_bit_width = 1
             bit_width = 1
 
-            Nets = [n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
-                    n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
-                    n5(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
-                    n6(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
+            Nets = [n1(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n3(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
 
-            netStr = ["alexnet_ReLU", "torchvision_alexnet_tanh_noBN", 
+            netStr = ["self_alexnet", "torchvision_alexnet_noBN", 
                         "torchvision_alexnet_BN_PreA", "torchvision_alexnet_BN_PostA"]
             index = 0
 
@@ -139,7 +137,7 @@ for x in choices:
                 net.to(device)
                 criterion = nn.CrossEntropyLoss()
                 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-                    
+
                 train(net, optimizer, criterion, train_data_loader, epochs=2, device=device)
                 test_model(net)
 
@@ -150,12 +148,12 @@ for x in choices:
                 weight_bit_width = bitWidth
                 bit_width = bitWidth
             
-            Nets = [n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width),  
-                    n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
-                    n5(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
-                    n6(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
-
-            netStr = ["alexnet_ReLU", "torchvision_alexnet_tanh_noBN", 
+            Nets = [n1(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width),  
+                    n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n3(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                    n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
+            
+            netStr = ["self_alexnet", "torchvision_alexnet_tanh_noBN", 
                         "torchvision_alexnet_BN_PreA", "torchvision_alexnet_BN_PostA"]
             index = 0
             
@@ -174,7 +172,7 @@ for x in choices:
                 net.to(device)
                 criterion = nn.CrossEntropyLoss()
                 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-                    
+                
                 train(net, optimizer, criterion, train_data_loader, epochs=2, device=device)
                 test_model(net)
 
