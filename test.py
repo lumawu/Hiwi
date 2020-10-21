@@ -130,8 +130,8 @@ for x in choices:
                 
                 print("######################################################################################")
                 print(" ")
-                print("Testing net " + netStr[index] + " with following parameters on Dataset " + x + " : ")
-                print("quantization: " + str(quantization) + " bit width: " + str(bit_width))
+                print("Testing net " + netStr[index] + " with following parameters on Dataset " + x + ":")
+                print("quantization: " + str(quantization) + " || bit width: " + str(bit_width))
                 print(" ")
 
                 net.to(device)
@@ -148,34 +148,34 @@ for x in choices:
                 weight_bit_width = bitWidth
                 bit_width = bitWidth
             
-            Nets = [n1(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width),  
-                    n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
-                    n3(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
-                    n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
+                Nets = [n1(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width),  
+                        n2(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                        n3(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width), 
+                        n4(num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width)]
             
-            netStr = ["self_alexnet", "torchvision_alexnet_tanh_noBN", 
-                        "torchvision_alexnet_BN_PreA", "torchvision_alexnet_BN_PostA"]
-            index = 0
+                netStr = ["self_alexnet", "torchvision_alexnet_tanh_noBN", 
+                            "torchvision_alexnet_BN_PreA", "torchvision_alexnet_BN_PostA"]
+                index = 0
             
-            for net in Nets:
-                if torch.cuda.is_available():
-                    device = torch.device("cuda") 
-                else:
-                    device = torch.device("cpu")
+                for net in Nets:
+                    if torch.cuda.is_available():
+                        device = torch.device("cuda") 
+                    else:
+                        device = torch.device("cpu")
                 
-                print("######################################################################################")
-                print(" ")
-                print("Testing net " + netStr[index] + " with following parameters on Dataset " + x + " : ")
-                print("quantization: " + str(quantization) + " bit width: " + str(bit_width))
-                print(" ")
+                    print("######################################################################################")
+                    print(" ")
+                    print("Testing net " + netStr[index] + " with following parameters on Dataset " + x + ":")
+                    print("quantization: " + str(quantization) + " || bit width: " + str(bit_width))
+                    print(" ")
 
-                net.to(device)
-                criterion = nn.CrossEntropyLoss()
-                optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+                    net.to(device)
+                    criterion = nn.CrossEntropyLoss()
+                    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
                 
-                train(net, optimizer, criterion, train_data_loader, epochs=2, device=device)
-                test_model(net)
+                    train(net, optimizer, criterion, train_data_loader, epochs=2, device=device)
+                    test_model(net)
 
-                index+=1
+                    index+=1
 
 
