@@ -1,0 +1,8 @@
+Testing...
+######################################################################################
+ 
+Testing net torchvision_googlenet with following parameters on Dataset CatsVSDogs:
+quantization: BINARY || bit width: 1
+ 
+Training Loss for epoch 0: 0.6389979417800903
+Training Loss for epoch 1: 0.5919880180835724

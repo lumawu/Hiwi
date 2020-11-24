@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.jit.annotations import Optional, Tuple
 from torch import Tensor
-from .utils import load_state_dict_from_url
+# from .utils import load_state_dict_from_url
 import brevitas.nn as qnn
 from brevitas.core.quant import QuantType
 
@@ -91,37 +91,51 @@ class GoogLeNet(nn.Module):
 
         self.aux_logits = aux_logits
         self.transform_input = transform_input
-
-        self.conv1 = conv_block(3, 64, kernel_size=7, stride=2, padding=3)
+        self.conv1 = conv_block(3, 64, weight_quant_type, weight_bit_width, quant_type, bit_width, 
+                    kernel_size=7, stride=2, padding=3)
         self.maxpool1 = nn.MaxPool2d(3, stride=2, ceil_mode=True)
-        self.conv2 = conv_block(64, 64, kernel_size=1)
-        self.conv3 = conv_block(64, 192, kernel_size=3, padding=1)
+        self.conv2 = conv_block(64, 64, weight_quant_type, weight_bit_width, quant_type, bit_width, 
+                    kernel_size=1)
+        self.conv3 = conv_block(64, 192, weight_quant_type, weight_bit_width, quant_type, bit_width, 
+                    kernel_size=3, padding=1)
         self.maxpool2 = nn.MaxPool2d(3, stride=2, ceil_mode=True)
 
-        self.inception3a = inception_block(192, 64, 96, 128, 16, 32, 32)
-        self.inception3b = inception_block(256, 128, 128, 192, 32, 96, 64)
+        self.inception3a = inception_block(192, 64, 96, 128, 16, 32, 32, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
+        self.inception3b = inception_block(256, 128, 128, 192, 32, 96, 64, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
         self.maxpool3 = nn.MaxPool2d(3, stride=2, ceil_mode=True)
 
-        self.inception4a = inception_block(480, 192, 96, 208, 16, 48, 64)
-        self.inception4b = inception_block(512, 160, 112, 224, 24, 64, 64)
-        self.inception4c = inception_block(512, 128, 128, 256, 24, 64, 64)
-        self.inception4d = inception_block(512, 112, 144, 288, 32, 64, 64)
-        self.inception4e = inception_block(528, 256, 160, 320, 32, 128, 128)
+        self.inception4a = inception_block(480, 192, 96, 208, 16, 48, 64, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
+        self.inception4b = inception_block(512, 160, 112, 224, 24, 64, 64, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
+        self.inception4c = inception_block(512, 128, 128, 256, 24, 64, 64, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
+        self.inception4d = inception_block(512, 112, 144, 288, 32, 64, 64, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
+        self.inception4e = inception_block(528, 256, 160, 320, 32, 128, 128, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
         self.maxpool4 = nn.MaxPool2d(2, stride=2, ceil_mode=True)
 
-        self.inception5a = inception_block(832, 256, 160, 320, 32, 128, 128)
-        self.inception5b = inception_block(832, 384, 192, 384, 48, 128, 128)
+        self.inception5a = inception_block(832, 256, 160, 320, 32, 128, 128, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
+        self.inception5b = inception_block(832, 384, 192, 384, 48, 128, 128, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
 
         if aux_logits:
-            self.aux1 = inception_aux_block(512, num_classes)
-            self.aux2 = inception_aux_block(528, num_classes)
+            self.aux1 = inception_aux_block(512, num_classes, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
+            self.aux2 = inception_aux_block(528, num_classes, 
+                    weight_quant_type, weight_bit_width, quant_type, bit_width)
         else:
             self.aux1 = None
             self.aux2 = None
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.dropout = nn.Dropout(0.2)
-        self.fc = nn.Linear(1024, num_classes)
+        self.fc = qnn.QuantLinear(1024, num_classes, bias=False,
+                    weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width)
 
         if init_weights:
             self._initialize_weights()
@@ -233,33 +247,33 @@ class Inception(nn.Module):
         if conv_block is None:
             conv_block = BasicConv2d
         self.branch1 = conv_block(in_channels, ch1x1, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width,
+                        weight_quant_type, weight_bit_width, quant_type, bit_width,
                         kernel_size=1)
 
         self.branch2 = nn.Sequential(
             conv_block(in_channels, ch3x3red, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width
+                        weight_quant_type, weight_bit_width, quant_type, bit_width,
                         kernel_size=1),
             conv_block(ch3x3red, ch3x3, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width, 
+                        weight_quant_type, weight_bit_width, quant_type, bit_width, 
                         kernel_size=3, padding=1)
         )
 
         self.branch3 = nn.Sequential(
             conv_block(in_channels, ch5x5red, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width, 
+                        weight_quant_type, weight_bit_width, quant_type, bit_width, 
                         kernel_size=1),
             # Here, kernel_size=3 instead of kernel_size=5 is a known bug.
             # Please see https://github.com/pytorch/vision/issues/906 for details.
             conv_block(ch5x5red, ch5x5, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width, 
+                        weight_quant_type, weight_bit_width, quant_type, bit_width, 
                         kernel_size=3, padding=1)
         )
 
         self.branch4 = nn.Sequential(
             nn.MaxPool2d(kernel_size=3, stride=1, padding=1, ceil_mode=True),
             conv_block(in_channels, pool_proj, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width
+                        weight_quant_type, weight_bit_width, quant_type, bit_width,
                         kernel_size=1)
         )
 
@@ -285,31 +299,28 @@ class InceptionAux(nn.Module):
         super(InceptionAux, self).__init__()
         if conv_block is None:
             conv_block = BasicConv2d
-        self.conv = conv_block(in_channels, 128, 
-                                weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width,
-                                kernel_size=1)
-
-        self.fc1 = qnn.QuantLinear(2048, 1024, bias=False, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width)
-        self.fc2 = qnn.QuantLinear(1024, num_classes, bias=False, 
-                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width)
-        self.a = activation(bit_width, quant_type)
+        
+        a = activation(bit_width, quant_type)
+        
+        self.features = nn.Sequential(
+            conv_block(in_channels, 128, 
+                                weight_quant_type, weight_bit_width, quant_type, bit_width,
+                                kernel_size=1),
+        )
+        self.classifier = nn.Sequential(
+            qnn.QuantLinear(2048, 1024, bias=False, 
+                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
+            a(bit_width, quant_type),
+            nn.Dropout(0.7, inplace=False),
+            qnn.QuantLinear(1024, num_classes, bias=False, 
+                        weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
+        )
 
     def forward(self, x):
-        # aux1: N x 512 x 14 x 14, aux2: N x 528 x 14 x 14
         x = F.adaptive_avg_pool2d(x, (4, 4))
-        # aux1: N x 512 x 4 x 4, aux2: N x 528 x 4 x 4
-        x = self.conv(x)
-        # N x 128 x 4 x 4
+        x = self.features(x)
         x = torch.flatten(x, 1)
-        # N x 2048
-        x = a(self.fc1(x))
-        # N x 1024
-        x = F.dropout(x, 0.7, training=self.training)
-        # N x 1024
-        x = self.fc2(x)
-        # N x 1000 (num_classes)
-
+        x = self.classifier(x)
         return x
 
 
@@ -317,13 +328,13 @@ class BasicConv2d(nn.Module):
 
     def __init__(self, in_channels, out_channels, weight_quant_type, weight_bit_width, quant_type, bit_width, **kwargs):
         super(BasicConv2d, self).__init__()
-        self.conv = qnn.QuantConv2d(in_channels, out_channels, bias=False, 
-            weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width, **kwargs)
-        self.bn = nn.BatchNorm2d(out_channels, eps=0.001)
-        self.a = activation(bit_width, quant_type)
-
+        a = activation(bit_width, quant_type)
+        self.features = nn.Sequential(
+            qnn.QuantConv2d(in_channels, out_channels, bias=False, 
+                weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width, **kwargs),
+            nn.BatchNorm2d(out_channels, eps=0.001),
+            a(bit_width, quant_type)
+        )
     def forward(self, x):
-        x = self.conv(x)
-        x = self.bn(x)
-        x = self.a(x)
+        x = self.features(x)
         return x
