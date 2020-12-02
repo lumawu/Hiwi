@@ -115,8 +115,8 @@ for x in choices:
         num_classes=2
     
     elif x == "CIFAR10":
-        trainset = torchvision.datasets.CIFAR10(root='/home/lucia/projdata/CIFAR10', train=True, download=True, transform=img_transforms)
-        testset = torchvision.datasets.CIFAR10(root='/home/lucia/projdata/CIFAR10', train=False, download=True, transform=img_transforms)
+        trainset = torchvision.datasets.CIFAR10(root='/home/lucia/datasets/CIFAR10', train=True, download=True, transform=img_transforms)
+        testset = torchvision.datasets.CIFAR10(root='/home/lucia/datasets/CIFAR10', train=False, download=True, transform=img_transforms)
         train_data_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         test_data_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
         classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
