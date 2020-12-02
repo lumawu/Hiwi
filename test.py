@@ -129,8 +129,7 @@ for x in choices:
         test_data = torchvision.datasets.ImageFolder(root=test_data_path,transform=img_transforms, is_valid_file=check_image)
         train_data_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         test_data_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-        num_classes = 
-        def train()
+        num_classes = 2
     
     elif x == "CIFAR10":
         trainset = torchvision.datasets.CIFAR10(root='/home/lucia/projdata/CIFAR10', train=True, download=True, transform=img_transforms)

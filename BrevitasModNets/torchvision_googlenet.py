@@ -30,9 +30,9 @@ class activation(nn.Module):
 
         def __call__(self, bit_width, quant_type):
             if quant_type == QuantType.BINARY:
-                return qnn.QuantTanh(bit_width, quant_type)
+                return qnn.QuantTanh(bit_width=bit_width, quant_type=quant_type)
             else: 
-                return qnn.QuantReLU(bit_width, quant_type)
+                return qnn.QuantReLU(bit_width=bit_width, quant_type=quant_type)
 
 
 def googlenet(pretrained=False, progress=False, **kwargs):
@@ -74,7 +74,7 @@ def googlenet(pretrained=False, progress=False, **kwargs):
 class GoogLeNet(nn.Module):
     __constants__ = ['aux_logits', 'transform_input']
 
-    def __init__(self, weight_quant_type, weight_bit_width, quant_type, bit_width, num_classes=1000, aux_logits=True, transform_input=False, init_weights=None,
+    def __init__(self, num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width, aux_logits=True, transform_input=False, init_weights=None,
                  blocks=None):
         super(GoogLeNet, self).__init__()
         if blocks is None:

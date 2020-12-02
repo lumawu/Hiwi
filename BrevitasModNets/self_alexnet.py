@@ -18,9 +18,9 @@ class activation(nn.Module):
 
         def __call__(self, bit_width, quant_type):
             if quant_type == QuantType.BINARY:
-                return qnn.QuantTanh(bit_width, quant_type)
+                return qnn.QuantTanh(bit_width=bit_width, quant_type=quant_type)
             else: 
-                return qnn.QuantReLU(bit_width, quant_type)
+                return qnn.QuantReLU(bit_width=bit_width, quant_type=quant_type)
 
 class AlexNet(nn.Module):
             def __init__(self, num_classes, weight_quant_type, weight_bit_width, quant_type, bit_width):
@@ -45,7 +45,8 @@ class AlexNet(nn.Module):
                     a(bit_width, quant_type),  
                     qnn.QuantConv2d(384, 256, kernel_size=3, padding=1,
                         weight_quant_type = weight_quant_type, weight_bit_width = weight_bit_width),
-                    a(bit_width, quant_type),  
+                    a(bit_width, quant_type),
+                    nn.BatchNorm2d(256), 
                     nn.MaxPool2d(kernel_size=3, stride=2),
                     )
                 self.avgpool = nn.AdaptiveAvgPool2d((6, 6))

@@ -10,9 +10,10 @@ class activation(nn.Module):
 
         def __call__(self, bit_width, quant_type):
             if quant_type == QuantType.BINARY:
-                return qnn.QuantTanh(bit_width, quant_type)
+                return qnn.QuantTanh(bit_width=bit_width, quant_type=quant_type)
             else: 
-                return qnn.QuantReLU(bit_width, quant_type)
+                return qnn.QuantReLU(bit_width=bit_width, quant_type=quant_type)
+
 
 class AlexNet(nn.Module):
 
