@@ -103,16 +103,16 @@ print("Testing...")
 
 quantizations = [QuantType.BINARY, QuantType.INT, QuantType.FP]
 bitWidths = [2, 3, 4, 5, 6, 7, 8]
-bitWidths_alt = [8]
 choices = ["CatsVSDogs", "CIFAR10"]
+
 
 for choice in choices:
     if choice == "CatsVSDogs":
-        train_data_path = "/home/lucia/datasets/catsVdogs/train/"
+        train_data_path = "/export/users/wucm/datasets/catsVdogs/train/"
         train_data = torchvision.datasets.ImageFolder(root=train_data_path,transform=img_transforms, is_valid_file=check_image)
-        validation_data_path = "/home/lucia/datasets/catsVdogs/validation/"
+        validation_data_path = "/export/users/wucm/datasets/catsVdogs/validation/"
         validation_data = torchvision.datasets.ImageFolder(root=validation_data_path,transform=img_transforms, is_valid_file=check_image)
-        test_data_path = "/home/lucia/datasets/catsVdogs//test/"
+        test_data_path = "/export/users/wucm/datasets/catsVdogs/test/"
         test_data = torchvision.datasets.ImageFolder(root=test_data_path,transform=img_transforms, is_valid_file=check_image)
         train_data_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         validation_data_loader = torch.utils.data.DataLoader(validation_data, batch_size=batch_size, shuffle=False, num_workers=num_workers)
@@ -120,8 +120,8 @@ for choice in choices:
         num_classes=2
     
     elif choice == "CIFAR10":
-        trainset = torchvision.datasets.CIFAR10(root='/home/lucia/datasets/CIFAR10', train=True, download=True, transform=img_transforms)
-        testset = torchvision.datasets.CIFAR10(root='/home/lucia/datasets/CIFAR10', train=False, download=True, transform=img_transforms)
+        trainset = torchvision.datasets.CIFAR10(root='/export/users/wucm/datasets/catsVdogs/CIFAR10', train=True, download=True, transform=img_transforms)
+        testset = torchvision.datasets.CIFAR10(root='/export/users/wucm/datasets/catsVdogs/CIFAR10', train=False, download=True, transform=img_transforms)
         train_data_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         validation_data_loader = None
         test_data_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
